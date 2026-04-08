@@ -38,6 +38,7 @@ class MyPhotos extends Component
     public $newNote = '';
     public $showNoteModal = false;
     public $team_id;
+    public $user_id;
     protected $queryString = [
         'filters' => ['except' => ['searchTitle' => '', 'filterPriority' => '', 'filterStatus' => '', 'filterDueDate' => '', 'sortField' => '', 'sortDirection' => '']],
         'currentTab' => ['except' => 'not_started']
@@ -295,69 +296,15 @@ class MyPhotos extends Component
         });
     }
 
-    public function getFilteredQuery()
-    {
-        $query = Todo::query()->with(['created_user', 'notes']);
-        
-        // Get current user and their roles
-        $user = Auth::user();
-        $userRoles = explode(',', $user->user_role);
-        $query->where("team_id",$this->team_id);
-        // If not Super Admin (1) or Admin (2), only show user's todos
-        if (!in_array('1', $userRoles) && !in_array('2', $userRoles)) {
-            $query->where('user_id', $user->id);
-        }
-        
-        return $query;
-    }
-    
+
     public function render()
     {
-        $tabCounts = $this->getTabCounts();
-        $query = $this->getFilteredQuery();
-
-        // Apply tab-based filtering
-        if ($this->currentTab === 'overdue') {
-            $query->where('due_date', '<', Carbon::today())
-                ->where('status', '!=', 'completed');
-        } else {
-            $query->where('status', $this->tabs[$this->currentTab]['status']);
-        }
-
-        // Apply other filters
-        $query->when($this->searchTitle, function ($query) {
-            $query->where('title', 'like', '%'.$this->searchTitle.'%');
-        })
-        ->when($this->filterPriority, function ($query) {
-            $query->where('priority', $this->filterPriority);
-        })
-        ->when($this->filterDueDate, function ($query) {
-            switch ($this->filterDueDate) {
-                case 'today':
-                    $query->whereDate('due_date', Carbon::today());
-                    break;
-                case 'week':
-                    $query->whereBetween('due_date', [
-                        Carbon::now()->startOfWeek(), 
-                        Carbon::now()->endOfWeek()
-                    ]);
-                    break;
-                case 'month':
-                    $query->whereMonth('due_date', Carbon::now()->month);
-                    break;
-                case 'overdue':
-                    $query->where('due_date', '<', Carbon::today())
-                        ->where('status', '!=', 'completed');
-                    break;
-            }
-        });
-
-        $todos = $query->orderBy($this->sortField, $this->sortDirection)
-                    ->paginate($this->perPage);
-
+        
+       $photos = \App\Models\Photo::with('attachments')
+        ->orderBy('created_at', 'desc')
+        ->paginate($this->perPage);
         return view('livewire.photos.photo-list', [
-            'todos' => $todos,
-            'tabCounts' => $tabCounts
+            'photos' => $photos,
         ])->layout('layouts.app');
     }
 

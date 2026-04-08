@@ -58,7 +58,7 @@
                 </li>
                          <li>
                             <a class="flex items-center py-0.5 px-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-700 dark:text-zinc-400 dark:hover:text-white"
-                                href="{{ route('document-collections') }}">
+                                href="{{ route('my-photos') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     class="size-5 mr-3 relative">
                                     <path stroke-linecap="round" stroke-linejoin="round" class="stroke-blue-500"
@@ -73,7 +73,7 @@
                         </li>
                          <li>
                             <a class="flex items-center py-0.5 px-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md text-gray-700 dark:text-zinc-400 dark:hover:text-white"
-                                href="{{ route('document-collections') }}">
+                                href="{{ route('my-videos') }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     class="size-5 mr-3 relative">
                                     <path stroke-linecap="round" stroke-linejoin="round" class="stroke-blue-500"

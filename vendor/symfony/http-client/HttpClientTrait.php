@@ -169,13 +169,14 @@ trait HttpClientTrait
             unset($options['auth_basic'], $options['auth_bearer']);
 
             // Parse base URI
-            if (\is_string($options['base_uri'])) {
-                $options['base_uri'] = self::parseUrl($options['base_uri']);
+            if (\is_string($baseUri = $options['base_uri'] ?? null)) {
+                $baseUri = self::parseUrl($baseUri);
             }
+            unset($options['base_uri']);
 
             // Validate and resolve URL
             $url = self::parseUrl($url, $options['query']);
-            $url = self::resolveUrl($url, $options['base_uri'], $defaultOptions['query'] ?? []);
+            $url = self::resolveUrl($url, $baseUri, $defaultOptions['query'] ?? []);
         }
 
         // Finalize normalization of options
@@ -354,6 +355,7 @@ trait HttpClientTrait
                     }
                 }
             });
+            $caster = null;
 
             if ('' === $body = http_build_query($body, '', '&')) {
                 return '';
@@ -652,7 +654,7 @@ trait HttpClientTrait
         $tail = '';
 
         if (false === $parts = parse_url(\strlen($url) !== strcspn($url, '?#') ? $url : $url.$tail = '#')) {
-            throw new InvalidArgumentException(sprintf('Malformed URL "%s".', $url));
+            throw new InvalidArgumentException(\sprintf('Malformed URL "%s".', $url));
         }
 
         if ($query) {

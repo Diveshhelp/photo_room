@@ -20,8 +20,10 @@ use App\Livewire\MyDocumentList;
 use App\Livewire\MyPhotos;
 use App\Livewire\MyReferral;
 use App\Livewire\MySubscription;
+use App\Livewire\MyVideos;
 use App\Livewire\NatureOfWorkManager;
 use App\Livewire\PasswordCollection;
+use App\Livewire\Photos;
 use App\Livewire\PrivateSubscription;
 use App\Livewire\ProcessData;
 use App\Livewire\ResumeManager;
@@ -43,7 +45,9 @@ use App\Livewire\TodoChart;
 use App\Livewire\UserLoginDetails;
 use App\Livewire\UserManager;
 use App\Livewire\UserUnsubscribe;
+use App\Livewire\Videos;
 use App\Models\Branches;
+use App\Models\Video;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\DepartmentsManager;
@@ -131,6 +135,11 @@ Route::middleware([
     // Regular user routes
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/my-photos', MyPhotos::class)->name('my-photos');
+    Route::get('/photos', Photos::class)->name('photos');
+
+    Route::get('/my-videos', MyVideos::class)->name('my-videos');
+    Route::get('/videos', Videos::class)->name('videos');
+
 
     Route::get('/todos-list', TodoList::class)->name('todos-list');
     Route::get('/task-collections', TaskCollections::class)->name('task-collections');

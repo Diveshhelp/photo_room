@@ -18,6 +18,7 @@
 namespace Google\Service\CloudDataplex\Resource;
 
 use Google\Service\CloudDataplex\GoogleCloudDataplexV1Entry;
+use Google\Service\CloudDataplex\GoogleCloudDataplexV1LookupEntryLinksResponse;
 use Google\Service\CloudDataplex\GoogleCloudDataplexV1SearchEntriesResponse;
 use Google\Service\CloudDataplex\GoogleCloudLocationListLocationsResponse;
 use Google\Service\CloudDataplex\GoogleCloudLocationLocation;
@@ -47,13 +48,20 @@ class ProjectsLocations extends \Google\Service\Resource
     return $this->call('get', [$params], GoogleCloudLocationLocation::class);
   }
   /**
-   * Lists information about the supported locations for this service.
+   * Lists information about the supported locations for this service. This method
+   * can be called in two ways: List all public locations: Use the path GET
+   * /v1/locations. List project-visible locations: Use the path GET
+   * /v1/projects/{project_id}/locations. This may include public locations as
+   * well as private or other locations specifically visible to the project.
    * (locations.listProjectsLocations)
    *
    * @param string $name The resource that owns the locations collection, if
    * applicable.
    * @param array $optParams Optional parameters.
    *
+   * @opt_param string extraLocationTypes Optional. Do not use this field. It is
+   * unsupported and is ignored unless explicitly documented otherwise. This is
+   * primarily for internal usage.
    * @opt_param string filter A filter to narrow down results to a preferred
    * subset. The filtering language accepts strings like "displayName=tokyo", and
    * is documented in more detail in AIP-160 (https://google.aip.dev/160).
@@ -71,11 +79,8 @@ class ProjectsLocations extends \Google\Service\Resource
     return $this->call('list', [$params], GoogleCloudLocationListLocationsResponse::class);
   }
   /**
-   * Looks up a single Entry by name using the permission on the source
-   * system.Caution: The BigQuery metadata that is stored in Dataplex Catalog is
-   * changing. For more information, see Changes to BigQuery metadata stored in
-   * Dataplex Catalog (https://cloud.google.com/dataplex/docs/biqquery-metadata-
-   * changes). (locations.lookupEntry)
+   * Looks up an entry by name using the permission on the source system.
+   * (locations.lookupEntry)
    *
    * @param string $name Required. The project to which the request should be
    * attributed in the following form: projects/{project}/locations/{location}.
@@ -100,15 +105,48 @@ class ProjectsLocations extends \Google\Service\Resource
     return $this->call('lookupEntry', [$params], GoogleCloudDataplexV1Entry::class);
   }
   /**
+   * Looks up Entry Links referencing the specified Entry.
+   * (locations.lookupEntryLinks)
+   *
+   * @param string $name Required. The project to which the request should be
+   * attributed to Format:
+   * projects/{project_id_or_number}/locations/{location_id}.
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string entry Required. The resource name of the referred Entry.
+   * Format: projects/{project_id_or_number}/locations/{location_id}/entryGroups/{
+   * entry_group_id}/entries/{entry_id}. Entry Links which references this entry
+   * will be returned in the response.
+   * @opt_param string entryLinkTypes Entry link types to filter the response by.
+   * If empty, all entry link types will be returned. At most 10 entry link types
+   * can be specified.
+   * @opt_param string entryMode Mode of entry reference.
+   * @opt_param int pageSize Maximum number of EntryLinks to return. The service
+   * may return fewer than this value. If unspecified, at most 10 EntryLinks will
+   * be returned. The maximum value is 10; values above 10 will be coerced to 10.
+   * @opt_param string pageToken Page token received from a previous
+   * LookupEntryLinks call. Provide this to retrieve the subsequent page. When
+   * paginating, all other parameters that are provided to the LookupEntryLinks
+   * request must match the call that provided the page token.
+   * @return GoogleCloudDataplexV1LookupEntryLinksResponse
+   * @throws \Google\Service\Exception
+   */
+  public function lookupEntryLinks($name, $optParams = [])
+  {
+    $params = ['name' => $name];
+    $params = array_merge($params, $optParams);
+    return $this->call('lookupEntryLinks', [$params], GoogleCloudDataplexV1LookupEntryLinksResponse::class);
+  }
+  /**
    * Searches for Entries matching the given query and scope.
    * (locations.searchEntries)
    *
    * @param string $name Required. The project to which the request should be
-   * attributed in the following form: projects/{project}/locations/{location}.
+   * attributed in the following form: projects/{project}/locations/global.
    * @param array $optParams Optional parameters.
    *
    * @opt_param string orderBy Optional. Specifies the ordering of results.
-   * Supported values are: relevance (default) last_modified_timestamp
+   * Supported values are: relevance last_modified_timestamp
    * last_modified_timestamp asc
    * @opt_param int pageSize Optional. Number of results in the search page. If
    * <=0, then defaults to 10. Max limit for page_size is 1000. Throws an invalid
@@ -117,11 +155,14 @@ class ProjectsLocations extends \Google\Service\Resource
    * SearchEntries call. Provide this to retrieve the subsequent page.
    * @opt_param string query Required. The query against which entries in scope
    * should be matched. The query syntax is defined in Search syntax for Dataplex
-   * Catalog (https://cloud.google.com/dataplex/docs/search-syntax).
+   * Universal Catalog (https://cloud.google.com/dataplex/docs/search-syntax).
    * @opt_param string scope Optional. The scope under which the search should be
    * operating. It must either be organizations/ or projects/. If it is
    * unspecified, it defaults to the organization where the project provided in
    * name is located.
+   * @opt_param bool semanticSearch Optional. Specifies whether the search should
+   * understand the meaning and intent behind the query, rather than just matching
+   * keywords.
    * @return GoogleCloudDataplexV1SearchEntriesResponse
    * @throws \Google\Service\Exception
    */

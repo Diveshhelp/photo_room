@@ -33,7 +33,7 @@
             </p>
         </div>
         <div class="ml-2 md:ml-4">
-            <a href="{{ route('todos') }}"
+            <a href="{{ route('photos') }}"
                 class="px-2 py-1 text-white hover:dark:text-dark-bg before:[content:''] relative z-[5] before:absolute before:left-0 before:h-full bg-primary dark:bg-secondary before:bg-secondary before:dark:bg-white hover:text-white no-underline transition-all ease-in-out duration-300 hover:before:w-full before:transition-all before:ease-in-out before:duration-300 before:z-[-1] flex justify-center items-center text-xs md:text-sm font-semibold before:w-0 border-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
@@ -153,17 +153,17 @@
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div>
                 @if (session()->has('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
                 @endif
 
                 @if (session()->has('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
                 @endif
 
                 <!-- Rest of your todos list content -->
@@ -179,87 +179,127 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <div class="p-6">
+                    <div x-data="{ 
+                        open: false, 
+                        currentIndex: 0, 
+                        attachments: [],
+                        openModal(photoAttachments, index) {
+                            this.attachments = photoAttachments;
+                            this.currentIndex = index;
+                            this.open = true;
+                        },
+                        next() {
+                            this.currentIndex = (this.currentIndex + 1) % this.attachments.length;
+                        },
+                        prev() {
+                            this.currentIndex = (this.currentIndex - 1 + this.attachments.length) % this.attachments.length;
+                        }
+                    }" class="relative">
 
-                    <div class="group relative flex flex-col cursor-pointer">
-                        <div
-                            class="relative aspect-square overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-all group-hover:ring-2 group-hover:ring-indigo-500">
-                            <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=500&q=80"
-                                class="absolute inset-0 size-full object-cover">
-
-                            <div
-                                class="absolute top-2 left-2 size-5 rounded-full border-2 border-white bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <i class="bi bi-check text-white text-xs"></i>
-                            </div>
-
-                            <div
-                                class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                                <p class="text-[10px] text-white font-medium truncate">IMG_8492.jpg</p>
-                            </div>
+                        {{-- Album Loop --}}
+                        <div class="space-y-6">
+                    @foreach($photos as $photo)
+                    <div class="album-group mb-8">
+                    {{-- Enhanced Header --}}
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-3 px-1">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-base font-bold text-gray-900 tracking-tight">
+                                {{ $photo->album_title }}
+                            </h3>
+                            <span class="text-gray-300">•</span>
+                            <span class="text-xs font-medium text-gray-500">
+                                {{ $photo->created_at->format('M d, Y') }}
+                            </span>
                         </div>
-
-                        <div class="mt-2">
-                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">Maui Vacation</p>
-                            <div class="flex items-center gap-1 text-[10px] text-gray-500">
-                                <i class="bi bi-cloud-check"></i>
-                                <span>Uploaded Oct 12</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="group relative flex flex-col cursor-pointer">
-                        <div
-                            class="relative aspect-square overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-all group-hover:ring-2 group-hover:ring-indigo-500">
-                            <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=500&q=80"
-                                class="absolute inset-0 size-full object-cover brightness-90">
-
-                            <div
-                                class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-white text-[9px] font-bold">
-                                0:45
-                            </div>
-
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i
-                                    class="bi bi-play-fill text-white text-3xl opacity-80 group-hover:scale-110 transition-transform"></i>
-                            </div>
-                        </div>
-
-                        <div class="mt-2">
-                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">Night City Vlog
-                            </p>
-                            <div class="flex items-center gap-1 text-[10px] text-gray-500">
-                                <i class="bi bi-camera-video"></i>
-                                <span>Uploaded Oct 14</span>
-                            </div>
+                        
+                        <div class="flex items-center gap-1 text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">
+                            <i class="bi bi-images"></i>
+                            {{ $photo->attachments->count() }}
                         </div>
                     </div>
 
-                    <div class="group relative flex flex-col cursor-pointer">
-                        <div
-                            class="relative aspect-square overflow-hidden rounded-xl bg-gray-100 shadow-sm transition-all group-hover:ring-2 group-hover:ring-indigo-500">
-                            <img src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=500&q=80"
-                                class="absolute inset-0 size-full object-cover">
-                            <div
-                                class="absolute top-2 left-2 size-5 rounded-full border-2 border-white bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity">
+
+            {{-- The Flex Container (Google Photos style layout) --}}
+            <div class="flex flex-wrap gap-1.5">
+                @php
+                    $jsAttachments = $photo->attachments->map(fn($a) => asset('storage/'.$a->file_path));
+                @endphp
+
+                @foreach($photo->attachments as $index => $attachment)
+                    <div wire:key="attachment-{{ $attachment->id }}" 
+                         @click="openModal({{ $jsAttachments->toJson() }}, {{ $index }})"
+                         {{-- FIXED SIZE: h-16 w-16 (64px) or h-20 w-20 (80px) --}}
+                         class="group relative h-20 w-20 flex-shrink-0 cursor-pointer overflow-hidden rounded-md bg-gray-100 shadow-sm transition-all hover:ring-2 hover:ring-indigo-500">
+                        
+                        <img src="{{ asset('storage/'. $attachment->file_path) }}" 
+                             class="size-full object-cover transition-transform duration-500 group-hover:scale-110"
+                             loading="lazy">
+
+                        {{-- Subtle Hover Overlay --}}
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endforeach
+</div>
+        {{-- ENHANCED MODAL VIEW (Kept the same, but optimized index handling) --}}
+        <div x-show="open" 
+             x-transition.opacity
+             @keydown.escape.window="open = false"
+             @keydown.right.window="next()"
+             @keydown.left.window="prev()"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm"
+             style="display: none;">
+            
+            <button @click="open = false" class="absolute top-5 right-5 text-white/70 hover:text-white z-[60]">
+                <i class="bi bi-x-lg text-3xl"></i>
+            </button>
+
+            <div class="relative w-full h-full flex items-center justify-center">
+                <template x-if="attachments.length > 1">
+                    <div class="absolute inset-x-0 flex justify-between px-4 z-50">
+                        <button @click="prev()" class="p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition">
+                            <i class="bi bi-chevron-left text-2xl"></i>
+                        </button>
+                        <button @click="next()" class="p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition">
+                            <i class="bi bi-chevron-right text-2xl"></i>
+                        </button>
+                    </div>
+                </template>
+
+                <img :src="attachments[currentIndex]" 
+                     class="max-h-[90vh] max-w-full rounded shadow-2xl object-contain">
+
+                <div class="absolute bottom-5 bg-black/50 px-3 py-1 rounded-full text-white/80 text-sm">
+                    <span x-text="currentIndex + 1"></span> / <span x-text="attachments.length"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    @if($photos->hasMorePages())
+                    <div x-data="{
+                observe() {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                @this.call('loadMore')
+                            }
+                        })
+                    }, { threshold: 0.1 })
+                    observer.observe($refs.loadMoreTrigger)
+                }
+            }" x-init="observe" x-ref="loadMoreTrigger" class="mt-10 flex justify-center">
+                        <div wire:loading class="flex items-center gap-2 text-indigo-500">
+                            <div class="animate-spin size-4 border-2 border-current border-t-transparent rounded-full">
                             </div>
-                        </div>
-                        <div class="mt-2">
-                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">Forest Trail</p>
-                            <p class="text-[10px] text-gray-500">Uploaded Oct 15 • 4.2 MB</p>
+                            <span class="text-xs font-medium">Loading more...</span>
                         </div>
                     </div>
-
-                    <div class="group flex flex-col">
-                        <div
-                            class="aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
-                            <i
-                                class="bi bi-plus-circle text-gray-300 group-hover:text-indigo-500 text-2xl transition-colors"></i>
-                        </div>
-                        <div class="mt-2 text-center">
-                            <p class="text-xs font-bold text-gray-400">New Upload</p>
-                        </div>
-                    </div>
-
+                    @endif
                 </div>
             </div>
         </div>

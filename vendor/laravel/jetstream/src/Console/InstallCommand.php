@@ -150,7 +150,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
     protected function installLivewireStack()
     {
         // Install Livewire...
-        if (! $this->requireComposerPackages('livewire/livewire:^3.0')) {
+        if (! $this->requireComposerPackages('livewire/livewire:^3.6.4')) {
             return false;
         }
 
@@ -358,7 +358,7 @@ EOF;
                 '@inertiajs/vue3' => '^2.0',
                 '@tailwindcss/forms' => '^0.5.7',
                 '@tailwindcss/typography' => '^0.5.10',
-                '@vitejs/plugin-vue' => '^5.0.0',
+                '@vitejs/plugin-vue' => '^6.0.4',
                 'autoprefixer' => '^10.4.16',
                 'postcss' => '^8.4.32',
                 'tailwindcss' => '^3.4.0',
@@ -609,13 +609,19 @@ EOF;
             ->whenNotEmpty(function ($names) use ($bootstrapApp, $group, $modifier) {
                 $names = $names->map(fn ($name) => "$name")->implode(','.PHP_EOL.'            ');
 
-                $bootstrapApp = str_replace(
+                $stubs = [
                     '->withMiddleware(function (Middleware $middleware) {',
-                    '->withMiddleware(function (Middleware $middleware) {'
+                    '->withMiddleware(function (Middleware $middleware): void {',
+                ];
+
+                $bootstrapApp = str_replace(
+                    $stubs,
+                    collect($stubs)->transform(fn ($stub) => $stub
                         .PHP_EOL."        \$middleware->$group($modifier: ["
                         .PHP_EOL."            $names,"
                         .PHP_EOL.'        ]);'
-                        .PHP_EOL,
+                        .PHP_EOL
+                    )->all(),
                     $bootstrapApp,
                 );
 

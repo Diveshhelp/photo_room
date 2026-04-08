@@ -18,6 +18,9 @@ class PostmarkClientBounceTest extends PostmarkClientBaseTest
         PostmarkClientSuppressionsTest::tearDownAfterClass();
     }
 
+    /**
+     * @depends testClientCanActivateBounce
+     */
     public function testClientCanGetDeliveryStatistics()
     {
         $tk = parent::$testKeys;
@@ -29,6 +32,9 @@ class PostmarkClientBounceTest extends PostmarkClientBaseTest
         $this->assertGreaterThan(0, $stats->getInactiveMails(), 'The inactive mail count should be greater than zero.');
     }
 
+    /**
+     * @depends testClientCanActivateBounce
+     */
     public function testClientCanGetBounces()
     {
         $tk = parent::$testKeys;
@@ -38,6 +44,9 @@ class PostmarkClientBounceTest extends PostmarkClientBaseTest
         $this->assertNotEmpty($bounces);
     }
 
+    /**
+     * @depends testClientCanActivateBounce
+     */
     public function testClientCanGetBounce()
     {
         $tk = parent::$testKeys;
@@ -49,6 +58,9 @@ class PostmarkClientBounceTest extends PostmarkClientBaseTest
         $this->assertEquals($id, $bounce->getID());
     }
 
+    /**
+     * @depends testClientCanActivateBounce
+     */
     public function testClientCanGetBounceDump()
     {
         $tk = parent::$testKeys;
