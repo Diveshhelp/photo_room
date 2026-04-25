@@ -6,6 +6,7 @@ use App\Models\TodoAttachment;
 use App\Models\TodoNote;
 use Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -297,6 +298,40 @@ class MyVideos extends Component
     }
 
 
+    public function confirmDelete($id)
+    {
+        
+        // Logic to delete the album
+        $album = \App\Models\Video::findOrFail($id);
+
+        // Optional: Delete physical files if necessary
+        // Storage::delete($album->path);
+
+        // $album->delete();
+
+        // Optional: Dispatch a browser event or notification
+        $this->dispatch('notify-success', 'Album deleted successfully.');
+    }
+    public function deleteAttachment($attachmentId)
+    {
+        $attachment = \App\Models\VideoAttachment::find($attachmentId);
+
+        if ($attachment) {
+            // 1. Delete the file from storage
+            if (asset('storage/' . $attachment->file_path)) {
+                
+                Storage::disk('public')->delete($attachment->file_path);
+                
+            }
+
+            // 2. Delete the record from the database
+            $attachment->delete();
+
+            // 3. Optional: Refresh or Notify
+            $this->dispatch('notify-success', 'Video removed  successfully.');
+
+        }
+    }
     public function render()
     {
         

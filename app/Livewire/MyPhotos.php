@@ -6,6 +6,7 @@ use App\Models\TodoAttachment;
 use App\Models\TodoNote;
 use Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -68,10 +69,10 @@ class MyPhotos extends Component
         $this->commonDeleteSuccess = str_replace('{module-name}', $this->moduleTitle, COMMON_DELETE_SUCCESS);
         $this->commonStatusUpdateSuccess = str_replace('{module-name}', $this->moduleTitle, COMMON_STATUS_SUCCESS);
         $this->commonNotDeleteSuccess = str_replace('{module-name}', $this->moduleTitle, COMMON_DELETE_FAILURE);
-        
+
     }
 
-    
+
 
     public function updatingSearchTitle()
     {
@@ -86,7 +87,7 @@ class MyPhotos extends Component
             $todo->update(['status' => $status]);
             $this->status = $status;
             $this->dispatch('notify-success', $this->commonStatusUpdateSuccess);
-            
+
         } catch (\Exception $e) {
             $this->dispatch('notify-error', 'Failed to update status');
         }
@@ -129,13 +130,13 @@ class MyPhotos extends Component
         // Format attachments if any
         if ($todo->attachments) {
             $todo->attachments = $todo->attachments->map(function ($attachment) {
-                $filePath = storage_path('app/public/'.$attachment->file_path);
+                $filePath = storage_path('app/public/' . $attachment->file_path);
 
                 return [
                     'id' => $attachment->id,
                     'file_name' => $attachment->name,
                     'size' => $this->formatFileSize($attachment->file_size),
-                    'file_path' => asset('storage/'.$attachment->file_path), // For public URL
+                    'file_path' => asset('storage/' . $attachment->file_path), // For public URL
                     'mime_type' => mime_content_type($filePath),
                 ];
             });
@@ -149,7 +150,7 @@ class MyPhotos extends Component
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $power = $size > 0 ? floor(log($size, 1024)) : 0;
 
-        return number_format($size / pow(1024, $power), 2, '.', ',').' '.$units[$power];
+        return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
     }
 
     public function editTodo($uuid)
@@ -160,7 +161,7 @@ class MyPhotos extends Component
     public function download($attachmentId)
     {
         $attachment = TodoAttachment::findOrFail($attachmentId);
-        
+
         if (!$attachment) {
             session()->flash('error', 'Attachment not found.');
             return;
@@ -190,17 +191,18 @@ class MyPhotos extends Component
         ]);
 
         $this->newNote = '';
-        $this->dispatch('note-added');    }
+        $this->dispatch('note-added');
+    }
 
     public function deleteNote($noteId)
     {
         $note = TodoNote::find($noteId);
-        
+
         if ($note && ($note->user_id === auth()->id() || auth()->user()->isAdmin())) {
             $note->delete();
         }
     }
-    #[On('note-added')] 
+    #[On('note-added')]
     public function refreshNotes()
     {
         // The list will be refreshed automatically
@@ -216,12 +218,12 @@ class MyPhotos extends Component
         $this->reset(['searchTitle', 'filterPriority', 'filterStatus', 'filterDueDate']);
         $this->resetPage();
     }
-    
+
     public function setTab($tab)
     {
         $this->resetPage(); // Reset pagination when tab is set
         $this->currentTab = $tab;
-        
+
         if ($tab === 'overdue') {
             $this->filters['dateRange'] = 'overdue';
             $this->filters['status'] = '';
@@ -229,11 +231,11 @@ class MyPhotos extends Component
             $this->filters['dateRange'] = '';
             $this->filters['status'] = $this->tabs[$tab]['status'];
         }
-        
+
         $this->dispatch('tabChanged', $tab);
     }
 
-   
+
     public function getTabCount($status)
     {
         $query = $this->getFilteredQuery();
@@ -248,39 +250,39 @@ class MyPhotos extends Component
 
         // Apply other filters
         $query->when($this->searchTitle, function ($query) {
-            $query->where('title', 'like', '%'.$this->searchTitle.'%');
+            $query->where('album_title', 'like', '%' . $this->searchTitle . '%');
         })
-        ->when($this->filterPriority, function ($query) {
-            $query->where('priority', $this->filterPriority);
-        })
-        ->when($this->filterDueDate, function ($query) {
-            switch ($this->filterDueDate) {
-                case 'today':
-                    $query->whereDate('due_date', Carbon::today());
-                    break;
-                case 'week':
-                    $query->whereBetween('due_date', [
-                        Carbon::now()->startOfWeek(), 
-                        Carbon::now()->endOfWeek()
-                    ]);
-                    break;
-                case 'month':
-                    $query->whereMonth('due_date', Carbon::now()->month);
-                    break;
-                case 'overdue':
-                    $query->where('due_date', '<', Carbon::today())
-                        ->where('status', '!=', 'completed');
-                    break;
-            }
-        });
+            ->when($this->filterPriority, function ($query) {
+                $query->where('priority', $this->filterPriority);
+            })
+            ->when($this->filterDueDate, function ($query) {
+                switch ($this->filterDueDate) {
+                    case 'today':
+                        $query->whereDate('due_date', Carbon::today());
+                        break;
+                    case 'week':
+                        $query->whereBetween('due_date', [
+                            Carbon::now()->startOfWeek(),
+                            Carbon::now()->endOfWeek()
+                        ]);
+                        break;
+                    case 'month':
+                        $query->whereMonth('due_date', Carbon::now()->month);
+                        break;
+                    case 'overdue':
+                        $query->where('due_date', '<', Carbon::today())
+                            ->where('status', '!=', 'completed');
+                        break;
+                }
+            });
 
         return $query->count();
     }
-    
+
     public function updatedCurrentTab($value)
     {
         $this->resetPage(); // Reset pagination when tab changes
-        
+
         if ($value === 'overdue') {
             $this->filters['dateRange'] = 'overdue';
             $this->filters['status'] = '';
@@ -295,14 +297,46 @@ class MyPhotos extends Component
             return [$key => $this->getTabCount($tab['status'])];
         });
     }
-
-
-    public function render()
+    public function confirmDelete($id)
     {
         
-       $photos = \App\Models\Photo::with('attachments')
-        ->orderBy('created_at', 'desc')
-        ->paginate($this->perPage);
+        // Logic to delete the album
+        $album = \App\Models\Photo::findOrFail($id);
+
+        // Optional: Delete physical files if necessary
+        // Storage::delete($album->path);
+
+        // $album->delete();
+
+        // Optional: Dispatch a browser event or notification
+        $this->dispatch('notify-success', 'Album deleted successfully.');
+    }
+    public function deleteAttachment($attachmentId)
+    {
+        $attachment = \App\Models\PhotoAttachment::find($attachmentId);
+
+        if ($attachment) {
+            // 1. Delete the file from storage
+            if (asset('storage/' . $attachment->file_path)) {
+                
+                Storage::disk('public')->delete($attachment->file_path);
+                
+            }
+
+            // 2. Delete the record from the database
+            $attachment->delete();
+
+            // 3. Optional: Refresh or Notify
+            $this->dispatch('notify-success', 'Photo removed  successfully.');
+
+        }
+    }
+    public function render()
+    {
+
+        $photos = \App\Models\Photo::with('attachments')
+            ->orderBy('created_at', 'desc')
+            ->paginate($this->perPage);
         return view('livewire.photos.photo-list', [
             'photos' => $photos,
         ])->layout('layouts.app');

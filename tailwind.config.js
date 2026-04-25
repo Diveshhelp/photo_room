@@ -61,7 +61,7 @@ export default {
                 'dark-bg': '#18181b'
               },
               spacing: {
-                '61': '171px', // or whatever value you want 61 to be
+                '61': '167px', // or whatever value you want 61 to be
               }
         },
     },

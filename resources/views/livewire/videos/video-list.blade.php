@@ -53,103 +53,8 @@
     dueDate: @entangle('filterDueDate')
 }" class="mt-2" wire:key="todo-manager-module-{{ time() }}">
 
-        <!-- Filter Toggle Button -->
-        <a @click="showFilters = !showFilters"
-            class="w-full mb-4 inline-flex items-center justify-between px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            <div class="flex items-center p-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span x-text="showFilters ? 'Hide Filters' : 'Show Filters'"></span>
 
-                <!-- Active filters counter -->
-                <span x-show="search || priority || status || dueDate"
-                    class="ml-2 text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">
-                    <span x-text="[search, priority, status, dueDate].filter(Boolean).length"></span>
-                </span>
-            </div>
-            <!-- Toggle arrow -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transition-transform duration-200"
-                :class="showFilters ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-        </a>
-
-        <!-- Filter Panel -->
-        <div x-show="showFilters" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 transform scale-95"
-            x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 transform scale-100"
-            x-transition:leave-end="opacity-0 transform scale-95" class="bg-white p-4 rounded-lg shadow-md mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Search -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                    <input type="text" wire:model="searchTitle"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        placeholder="Search todos...">
-                </div>
-
-                <!-- Priority Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                    <select wire:model="filterPriority"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="">All Priorities</option>
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
-                </div>
-
-                <!-- Status Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select wire:model="filterStatus"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="">All Status</option>
-                        <option value="not_started">Not Started</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
-                </div>
-
-                <!-- Due Date Filter -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                    <select wire:model="filterDueDate"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="">All Dates</option>
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                        <option value="overdue">Overdue</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="mt-4 flex justify-end space-x-2">
-                <button wire:click="resetFilters"
-                    class="px-2 py-1 text-white hover:dark:text-dark-bg before:[content:''] relative z-[5] before:absolute before:left-0 before:h-full bg-primary dark:bg-secondary before:bg-secondary before:dark:bg-white hover:text-white no-underline transition-all ease-in-out duration-300 hover:before:w-full before:transition-all before:ease-in-out before:duration-300 before:z-[-1] flex justify-center items-center text-sm font-semibold before:w-0 border-0">
-                    Clear
-                </button>
-                <button wire:click="applyFilters"
-                    class="px-2 py-1 text-white hover:dark:text-dark-bg before:[content:''] relative z-[5] before:absolute before:left-0 before:h-full bg-primary dark:bg-secondary before:bg-secondary before:dark:bg-white hover:text-white no-underline transition-all ease-in-out duration-300 hover:before:w-full before:transition-all before:ease-in-out before:duration-300 before:z-[-1] flex justify-center items-center text-sm font-semibold before:w-0 border-0">
-                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Search
-                </button>
-
-            </div>
-        </div>
-
-        <!-- Todo List Table -->
+              <!-- Todo List Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div>
                 @if (session()->has('success'))
@@ -180,7 +85,7 @@
                 </div>
 
              <div class="p-6">
-    {{-- 1. Alpine Component --}}
+    
     <div x-data="{ 
         open: false, 
         currentIndex: 0, 
@@ -215,11 +120,42 @@
                             <h3 class="text-base font-bold text-gray-900 tracking-tight">{{ $photo->album_title }}</h3>
                             <span class="text-gray-300">•</span>
                             <span class="text-xs font-medium text-gray-500">{{ $photo->created_at->format('M d, Y') }}</span>
+                            <div class="inline-flex items-center ml-2">
+                                                <button type="button" wire:click="confirmDelete({{ $photo->id }})"
+                                                    wire:confirm="Are you sure you want to delete this album?"
+                                                    wire:loading.remove wire:target="confirmDelete({{ $photo->id }})"
+                                                    class="text-gray-400 hover:text-red-600 transition-colors duration-200"
+                                                    title="Delete Album">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0">
+                                                        </path>
+                                                    </svg>
+                                                </button>
+
+                                                <div wire:loading wire:target="confirmDelete({{ $photo->id }})">
+                                                    <svg class="animate-spin h-4 w-4 text-indigo-600"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                            stroke="currentColor" stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                        </path>
+                                                    </svg>
+                                                </div>
+                                            </div>
                         </div>
-                        <div class="flex items-center gap-1 text-[11px] font-semibold text-indigo-600 uppercase tracking-wider">
-                            <i class="bi bi-collection-play"></i>
-                            {{ $photo->attachments->count() }}
-                        </div>
+                         <div
+                                            class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-[10px] font-bold text-indigo-600 uppercase tracking-tight shadow-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                class="size-3">
+                                                <path fill-rule="evenodd"
+                                                    d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 0v9.5c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-9.5a.75.75 0 0 0-.75-.75H3.25a.75.75 0 0 0-.75.75ZM3.5 12.75l3.5-3.5 4.25 4.25 3.5-3.5 1.75 1.75v-5.5a.25.25 0 0 0-.25-.25H3.75a.25.25 0 0 0-.25.25v6.5Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span>{{ $photo->attachments->count() }} Videos</span>
+                                        </div>
                     </div>
 
                     {{-- Grid Container --}}
@@ -251,15 +187,30 @@
                                          class="size-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
                                 @endif
 
+                                                <button type="button" wire:click.stop="deleteAttachment({{ $attachment->id }})"
+                                                    wire:confirm="Are you sure you want to remove this video?"
+                                                    class="absolute top-1 right-1 z-10 hidden group-hover:flex h-5 w-5 items-center justify-center rounded-full bg-white text-red-600 shadow-md hover:bg-red-600 hover:text-white transition-colors"
+                                                    title="Remove Photo">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                        fill="currentColor" class="size-3.5">
+                                                        <path
+                                                            d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                                                    </svg>
+                                                </button>
+
+                                                <div wire:loading wire:target="deleteAttachment({{ $attachment->id }})"
+                                                    class="absolute inset-0 flex items-center justify-center bg-white/50">
+                                                    <div
+                                                        class="h-4 w-4 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent">
+                                                    </div>
+                                                </div>
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
                             </div>
                         @endforeach
                     </div>
                 </div>
             @endforeach
-        </div>
-
-        {{-- MODAL VIEW --}}
+        </div>        
         <div x-show="open" 
              x-transition.opacity
              @keydown.escape.window="open = false"
@@ -311,26 +262,8 @@
     </div>
 </div>
 
-                    @if($photos->hasMorePages())
-                    <div x-data="{
-                observe() {
-                    const observer = new IntersectionObserver((entries) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                @this.call('loadMore')
-                            }
-                        })
-                    }, { threshold: 0.1 })
-                    observer.observe($refs.loadMoreTrigger)
-                }
-            }" x-init="observe" x-ref="loadMoreTrigger" class="mt-10 flex justify-center">
-                        <div wire:loading class="flex items-center gap-2 text-indigo-500">
-                            <div class="animate-spin size-4 border-2 border-current border-t-transparent rounded-full">
-                            </div>
-                            <span class="text-xs font-medium">Loading more...</span>
-                        </div>
-                    </div>
-                    @endif
+                 
+                {{ $photos->links() }}
                 </div>
             </div>
         </div>
