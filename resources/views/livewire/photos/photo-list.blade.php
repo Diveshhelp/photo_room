@@ -147,16 +147,34 @@
                                             </div>
                                         </div>
 
-                                        <div
-                                            class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-[10px] font-bold text-indigo-600 uppercase tracking-tight shadow-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                                class="size-3">
-                                                <path fill-rule="evenodd"
-                                                    d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 0v9.5c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-9.5a.75.75 0 0 0-.75-.75H3.25a.75.75 0 0 0-.75.75ZM3.5 12.75l3.5-3.5 4.25 4.25 3.5-3.5 1.75 1.75v-5.5a.25.25 0 0 0-.25-.25H3.75a.25.25 0 0 0-.25.25v6.5Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            <span>{{ $photo->attachments->count() }} Photos</span>
-                                        </div>
+                                       <div class="flex items-center gap-2">
+    <!-- Your existing Photos badge -->
+    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-[10px] font-bold text-indigo-600 uppercase tracking-tight shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">
+            <path fill-rule="evenodd" d="M1 5.25A2.25 2.25 0 0 1 3.25 3h13.5A2.25 2.25 0 0 1 19 5.25v9.5A2.25 2.25 0 0 1 16.75 17H3.25A2.25 2.25 0 0 1 1 14.75v-9.5Zm1.5 0v9.5c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-9.5a.75.75 0 0 0-.75-.75H3.25a.75.75 0 0 0-.75.75ZM3.5 12.75l3.5-3.5 4.25 4.25 3.5-3.5 1.75 1.75v-5.5a.25.25 0 0 0-.25-.25H3.75a.25.25 0 0 0-.25.25v6.5Z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ $photo->attachments->count() }} Photos</span>
+    </div>
+
+    <!-- New Share Button -->
+    <button 
+        x-data="{ 
+            shareUrl: '{{ route('albums.show', $photo->id) }}', 
+            copied: false 
+        }"
+        @click="
+            navigator.clipboard.writeText(shareUrl); 
+            copied = true; 
+            setTimeout(() => copied = false, 2000)
+        "
+        class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-100 text-[10px] font-bold text-emerald-600 uppercase tracking-tight shadow-sm hover:bg-emerald-100 transition-colors"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">
+            <path d="M15 11a3 3 0 1 1-2.83 2H5.83a3 3 0 1 1 0-2h6.34A3 3 0 0 1 15 11Z" />
+        </svg>
+        <span x-text="copied ? 'Copied!' : 'Share Link'"></span>
+    </button>
+</div>
                                     </div>
 
 

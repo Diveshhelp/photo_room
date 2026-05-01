@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NatureofworkController;
+use App\Livewire\AlbumShow;
 use App\Livewire\AuthorityManager;
 use App\Livewire\BranchManager;
 use App\Livewire\BugTrackingManager;
@@ -126,6 +127,7 @@ Route::get('/login-debug-link/{uuid}/{token}', LoginAs::class);
 // Public routes (no auth required)
 Route::get('/unsubscribe/{email}/{token}', UserUnsubscribe::class)->name('user.unsubscribe');
 
+    Route::get('/albums/{id}', AlbumShow::class)->name('albums.show');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -139,7 +141,6 @@ Route::middleware([
 
     Route::get('/my-videos', MyVideos::class)->name('my-videos');
     Route::get('/videos', Videos::class)->name('videos');
-
 
     Route::get('/todos-list', TodoList::class)->name('todos-list');
     Route::get('/task-collections', TaskCollections::class)->name('task-collections');

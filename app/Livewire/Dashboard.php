@@ -74,10 +74,8 @@ class Dashboard extends Component
         $this->phone=Auth::user()->mobile??'';
         $this->company=Auth::user()->currentTeam->name??'';
 
-        $this->generateMathCaptcha();
         
         $this->team_id = Auth::user()->currentTeam->id;
-        $this->loadStats();
 
         
         $team = Auth::user()->currentTeam;
@@ -494,6 +492,35 @@ class Dashboard extends Component
     }
     public function render()
     {
-        return view('livewire.dashboard')->layout('layouts.app');
+        // 1. Calculate Total Bytes from both models
+        $photoBytes = \App\Models\PhotoAttachment::sum('file_size');
+        $videoBytes = \App\Models\VideoAttachment::sum('file_size');
+        $totalBytes = $photoBytes + $videoBytes;
+
+        // 2. Convert combined total to MB
+        $totalMbUsage = $totalBytes / 1048576; 
+        
+        // 3. Human-readable format for total storage
+        $totalStorage = $totalBytes > 0 ? round($totalMbUsage, 2) : 0;
+
+        // 4. Individual category usage in MB
+        $photoMbUsage = $photoBytes / 1048576;
+        $videoMbUsage = $videoBytes / 1048576;
+
+        // 5. Combined File Count[cite: 1]
+        $totalFileCount = \App\Models\PhotoAttachment::count() + \App\Models\VideoAttachment::count();
+
+        // 6. Set your limit (e.g., 500MB)[cite: 1]
+        $maxStorageLimit = 500;
+
+        return view('livewire.dashboard', [
+            'totalStorage' => $totalStorage,
+            'allData' => $this->allData, // Contains trial/pro days remaining[cite: 1]
+            'totalFileCount' => $totalFileCount,
+            'totalMbUsage' => $totalMbUsage,
+            'photoMbUsage' => $photoMbUsage,
+            'videoMbUsage' => $videoMbUsage,
+            'maxStorageLimit' => $maxStorageLimit
+        ])->layout('layouts.app');
     }
 }
