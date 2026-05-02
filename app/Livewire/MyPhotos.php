@@ -44,7 +44,8 @@ class MyPhotos extends Component
         'filters' => ['except' => ['searchTitle' => '', 'filterPriority' => '', 'filterStatus' => '', 'filterDueDate' => '', 'sortField' => '', 'sortDirection' => '']],
         'currentTab' => ['except' => 'not_started']
     ];
-
+    public $type;
+    public $options = ['low' => 'Public', 'medium' => 'Private', 'high' => 'Confidential'];
     public $currentTab = 'not_started';
     public $tabs = [
         'not_started' => ['name' => 'Not Started', 'status' => 'pending'],
@@ -330,6 +331,12 @@ class MyPhotos extends Component
             $this->dispatch('notify-success', 'Photo removed  successfully.');
 
         }
+    }
+    public function updateType($newType,$uuid)
+    {
+        \App\Models\Photo::where('uuid', $uuid)->update(['priority' => $newType]);
+        $this->dispatch('notify-success', 'Type updated successfully.');
+
     }
     public function render()
     {

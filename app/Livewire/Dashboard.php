@@ -511,7 +511,7 @@ class Dashboard extends Component
         $totalFileCount = \App\Models\PhotoAttachment::count() + \App\Models\VideoAttachment::count();
 
         // 6. Set your limit (e.g., 500MB)[cite: 1]
-        $maxStorageLimit = 500;
+        $maxStorageLimit = 1024;
 
         return view('livewire.dashboard', [
             'totalStorage' => $totalStorage,

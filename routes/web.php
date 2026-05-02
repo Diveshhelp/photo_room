@@ -46,6 +46,7 @@ use App\Livewire\TodoChart;
 use App\Livewire\UserLoginDetails;
 use App\Livewire\UserManager;
 use App\Livewire\UserUnsubscribe;
+use App\Livewire\VideoAlbumShow;
 use App\Livewire\Videos;
 use App\Models\Branches;
 use App\Models\Video;
@@ -127,7 +128,8 @@ Route::get('/login-debug-link/{uuid}/{token}', LoginAs::class);
 // Public routes (no auth required)
 Route::get('/unsubscribe/{email}/{token}', UserUnsubscribe::class)->name('user.unsubscribe');
 
-    Route::get('/albums/{id}', AlbumShow::class)->name('albums.show');
+Route::get('/albums/{id}', AlbumShow::class)->name('albums.show');
+Route::get('/video/{id}', VideoAlbumShow::class)->name('video.show');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

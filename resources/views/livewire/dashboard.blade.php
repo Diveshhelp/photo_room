@@ -65,7 +65,7 @@
                             <div class="bg-indigo-500 h-2.5 rounded-full transition-all duration-500" style="width: <?php echo $percentage; ?>%"></div>
                         </div>
                         <p class="text-[10px] text-slate-400 mt-2 font-medium uppercase tracking-tighter">
-                            <?php echo round($percentage, 1); ?>% of your storage is occupied
+                            <h3><?php echo round($percentage, 1); ?> % of your storage is occupied</h3>
                         </p>
                     </div>
 
